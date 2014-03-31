@@ -24,8 +24,10 @@ module Quartz
 
 
     def self.cronify(time,at=0)
-      timing = %w(0 * * * * ?)
-      case time
+      timing = ''
+      if time.is_a?(Fixnum)
+        timing = %w(0 * * * * ?)
+        case time
         when 0.seconds...1.minute
           timing[0] = "0/#{time.to_s}"
         when 1.minute...1.hour
@@ -48,8 +50,12 @@ module Quartz
           timing[4] = comma_separated_timing(month_frequency, 12, 1)
         else
           return 'bummer'
+        end
+        timing.join(' ')
+      else
+        # if time is a cron expression, return it and ignore at
+        timing = time
       end
-      timing.join(' ')
     end
   end
 end
